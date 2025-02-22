@@ -72,18 +72,18 @@ This project is licensed under the MIT License.
 ## 付録
 [mintscan](https://www.mintscan.io/osmosis/relayers/)より 2025年2月22日現在
 
-| Chain       | Well-Known      | Total          | Receive : Send |
+| Chain       | Well-Known      | Total (times)     | Receive : Send |
 |------------|----------------|----------------|--------------|
-| AKASH      | [channel-1](#) |  3,514 ($1,933,463) | 57:43 |
-| NEUTRON    | [channel-874](#) | 3,854 ($1,073,078) | 42:58 |
-| ATOMONE    | [channel-85309](#) | 3,858 ($0)        | 72:28 |
-| DYMENSION  | [channel-19774](#) | 4,128 ($4,600)    | 64:36 |
-| STRIDE     | [channel-326](#) |  5,341 ($2,105,540) | 52:48 |
-| MANTRA     | [channel-85077](#) | 5,707 ($5,749,397) | 56:44 |
-| INJECTIVE  | [channel-122](#) | 6,036 ($141,389)  | 50:50 |
-| AXELAR     | [channel-208](#) | 8,026 ($10,174,042) | 49:51 |
-| STARGAZE   | [channel-75](#)  | 9,909 ($1,041,408) | 32:68 |
-| NOBLE      | [channel-750](#) | 88,000 ($23,021,986) | 44:56 |
-| CELESTIA   | [channel-6994](#) | 13,450 ($6,237,037) | 42:58 |
-| COSMOS HUB | [channel-0](#) | 24,497 ($13,898,751) | 49:51 |
+| AKASH      | [channel-1] |  3,514  | 57:43 |
+| NEUTRON    | [channel-874] | 3,854 | 42:58 |
+| ATOMONE    | [channel-85309] | 3,858  | 72:28 |
+| DYMENSION  | [channel-19774] | 4,128 | 64:36 |
+| STRIDE     | [channel-326] |  5,341 | 52:48 |
+| MANTRA     | [channel-85077] | 5,707 | 56:44 |
+| INJECTIVE  | [channel-122] | 6,036 | 50:50 |
+| AXELAR     | [channel-208] | 8,026 | 49:51 |
+| STARGAZE   | [channel-75]  | 9,909 | 32:68 |
+| NOBLE      | [channel-750] | 88,000 | 44:56 |
+| CELESTIA   | [channel-6994] | 13,450 | 42:58 |
+| COSMOS HUB | [channel-0] | 24,497 | 49:51 |
 
