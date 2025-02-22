@@ -38,7 +38,8 @@ def fetch_block_timestamp(height):
     return None
 
 # チャネルを指定してデータを取得
-target_csv = "ibc_packet_delay_analysis.csv"
+base_file = "ibc_packet_delay_analysis30116000-30118000"
+target_csv = base_file + ".csv"
 df = pd.read_csv(target_csv)
 available_channels = sorted(set(df["channel_id"].str.replace("channel-", "").astype(int)))
 print("利用可能なチャネルID:", ", ".join(map(str, available_channels)))
@@ -59,9 +60,13 @@ timestamps = {height: fetch_block_timestamp(height) for height in block_heights}
 # データのフィルタリング
 if apply_filter:
     df = df[df["channel_id"] == f"channel-{target_channel}"]
+filtered_ibc_count = len(df)
+print(f"Filtered IBC transactions count: {filtered_ibc_count}")
+
 df["send_time"] = df["send_height"].map(timestamps)
 df["ack_time"] = df["ack_height"].map(timestamps)
 df["time_delay_sec"] = (df["ack_time"] - df["send_time"]).dt.total_seconds()
+df["block_delay"] = df["ack_height"] - df["send_height"]
 
 # 結果を保存
 output_csv = f"ibc_time_delay_analysis_{target_channel if apply_filter else 'all'}.csv"
@@ -77,6 +82,20 @@ plt.title("Distribution of Time Delay (seconds)")
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 
 # 画像ファイルとして保存
-plot_filename = f"time_delay_distribution_{target_channel if apply_filter else 'all'}.png"
+plot_filename = f"time_delay_distribution_" + str(base_file) + f"{target_channel if apply_filter else 'all'}.png"
 plt.savefig(plot_filename)
 print(f"Histogram saved as {plot_filename}")
+
+# block_delayの分布図を作成
+plt.figure(figsize=(10, 6))
+plt.hist(df["block_delay"].dropna(), bins=30, edgecolor='black', alpha=0.7)
+plt.xlabel("Block Delay (blocks)")
+plt.ylabel("Frequency")
+plt.title("Distribution of Block Delay (blocks)")
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+# 画像ファイルとして保存
+block_plot_filename = f"block_delay_distribution_" + str(base_file) + f"{target_channel if apply_filter else 'all'}.png"
+plt.savefig(block_plot_filename)
+print(f"Histogram saved as {block_plot_filename}")
+

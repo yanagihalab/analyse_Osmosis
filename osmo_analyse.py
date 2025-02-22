@@ -7,8 +7,8 @@ RPC_URL = "https://rpc.lavenderfive.com/osmosis/block_results?height="
 
 # 解析対象のブロック範囲
 START_HEIGHT = 30116000  # 例: 調査開始ブロック
-END_HEIGHT = 30136000   # 例: 調査終了ブロック
-
+END_HEIGHT = 30116100   # 例: 調査終了ブロック
+print(f"{START_HEIGHT} から {END_HEIGHT} までの分析")
 # IBCパケット情報を保存する辞書
 send_packets = {}
 ack_packets = {}
