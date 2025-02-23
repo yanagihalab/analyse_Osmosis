@@ -98,7 +98,7 @@ for height in range(START_HEIGHT, END_HEIGHT + 1):
     time.sleep(0.1)  # API負荷軽減のため
 
 # send_packet と acknowledge_packet の遅延分析
-packet_delays = []z
+packet_delays = []
 for key in send_packets.keys():
     send_height = send_packets[key]
     ack_height = ack_packets.get(key)

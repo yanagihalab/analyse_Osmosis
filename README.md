@@ -4,7 +4,10 @@
 
 This script analyzes IBC (Inter-Blockchain Communication) transactions on the Osmosis blockchain. It processes a CSV file containing transaction data, extracts block timestamps, calculates transaction delays, and generates histograms to visualize the delays.
 
-このスクリプトは、Osmosis ブロックチェーン上の IBC (Inter-Blockchain Communication) トランザクションを分析します。トランザクションデータを含む CSV ファイルを処理し、ブロックのタイムスタンプを取得し、トランザクションの遅延を計算し、ヒストグラムを生成して視覚化します。
+このスクリプトは、Osmosis ブロックチェーン上の IBC (Inter-Blockchain Communication) トランザクションを
+分析します。RPCノードからトランザクションデータを取得し、IBC transferを CSV ファイルにまとめます
+まとめて CSV ファイルからブロックのタイムスタンプを取得し、トランザクションの遅延を計算し、
+ヒストグラムを生成して視覚化します。
 
 ## Features / 機能
 
@@ -70,20 +73,22 @@ This project is licensed under the MIT License.
 このプロジェクトは MIT ライセンスのもとで提供されます。
 
 ## 付録
-[mintscan](https://www.mintscan.io/osmosis/relayers/)より 2025年2月22日現在
+[mintscan](https://www.mintscan.io/osmosis/relayers/)より2025年2月22日現在の7日間データ<br>
+OSMOSISとの主なIBCの接続先(Well-Knownでソート)
 
-| Chain       | Well-Known      | Total (times)     | Receive : Send |
-|------------|----------------|----------------|--------------|
-| AKASH      | [channel-1] |  3,514  | 57:43 |
-| NEUTRON    | [channel-874] | 3,854 | 42:58 |
-| ATOMONE    | [channel-85309] | 3,858  | 72:28 |
-| DYMENSION  | [channel-19774] | 4,128 | 64:36 |
-| STRIDE     | [channel-326] |  5,341 | 52:48 |
-| MANTRA     | [channel-85077] | 5,707 | 56:44 |
-| INJECTIVE  | [channel-122] | 6,036 | 50:50 |
-| AXELAR     | [channel-208] | 8,026 | 49:51 |
-| STARGAZE   | [channel-75]  | 9,909 | 32:68 |
-| NOBLE      | [channel-750] | 88,000 | 44:56 |
-| CELESTIA   | [channel-6994] | 13,450 | 42:58 |
-| COSMOS HUB | [channel-0] | 24,497 | 49:51 |
+| Chain       | Well-Known      | Total IBC (times) | Receive : Send |
+|------------|----------------|--------------|---------------|
+| COSMOS HUB | [channel-0]    | 24,497       | 49:51        |
+| AKASH      | [channel-1]    | 3,514        | 57:43        |
+| STARGAZE   | [channel-75]   | 9,909        | 32:68        |
+| INJECTIVE  | [channel-122]  | 6,036        | 50:50        |
+| STRIDE     | [channel-326]  | 5,341        | 52:48        |
+| DYMENSION  | [channel-19774] | 4,128       | 64:36        |
+| AXELAR     | [channel-208]  | 8,026        | 49:51        |
+| CELESTIA   | [channel-6994] | 13,450       | 42:58        |
+| NOBLE      | [channel-750]  | 88,000       | 44:56        |
+| NEUTRON    | [channel-874]  | 3,854        | 42:58        |
+| MANTRA     | [channel-85077] | 5,707       | 56:44        |
+| ATOMONE    | [channel-85309] | 3,858       | 72:28        |
+
 
