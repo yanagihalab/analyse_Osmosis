@@ -5,12 +5,12 @@ import pandas as pd
 from datetime import datetime
 
 # RPCエンドポイント
-RPC_URL = "https://cosmos-rpc.publicnode.com/block_results?height="
-BLOCK_HEADER_URL = "https://cosmos-rpc.publicnode.com/block?height="
+RPC_URL = "https://rpc.lavenderfive.com:443/injective/block_results?height="
+BLOCK_HEADER_URL = "https://rpc.lavenderfive.com:443/injective/block?height="
 
 # 解析対象のブロック範囲
-START_HEIGHT = 23500500
-END_HEIGHT = 24500000# 24546166
+START_HEIGHT = 106000000
+END_HEIGHT = 107180000# 24546166
 
 print(f"{START_HEIGHT} から {END_HEIGHT} までの {END_HEIGHT - START_HEIGHT} ブロック分の分析")
 
@@ -110,7 +110,7 @@ for height in range(START_HEIGHT, END_HEIGHT + 1):
     if block_results:
         parse_ibc_events(height, block_results.get("result", {}))
     block_timestamps[height] = fetch_block_timestamp(height)
-    time.sleep(0.5)
+    time.sleep(0.1)
 
 for key in send_packets.keys():
     send_height = send_packets[key]

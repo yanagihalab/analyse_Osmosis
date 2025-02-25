@@ -6,8 +6,8 @@ import pandas as pd
 RPC_URL = "https://rpc.lavenderfive.com/osmosis/block_results?height="
 
 # 解析対象のブロック範囲
-START_HEIGHT = 30159500  # 例: 調査開始ブロック
-END_HEIGHT = 30190534   # 例: 調査終了ブロック
+START_HEIGHT = 30190000  # 例: 調査開始ブロック
+END_HEIGHT = 30226593   # 例: 調査終了ブロック
 print(f"{START_HEIGHT} から {END_HEIGHT} までの {END_HEIGHT-START_HEIGHT} ブロック分の分析")
 # IBCパケット情報を保存する辞書
 send_packets = {}
@@ -63,7 +63,7 @@ def parse_ibc_events(height, block_data):
 # 指定範囲のブロックを取得して解析
 for height in range(START_HEIGHT, END_HEIGHT + 1):
     print(f"Fetching block {height}...")
-    print(f"Query block {height-START_HEIGHT}")
+    print(f"Query block {height-START_HEIGHT} 残り {END_HEIGHT-height}")
     block_results = fetch_block_results(height)
     while block_results is None:
         print(f"Retrying block {height}...")
