@@ -38,7 +38,7 @@ def fetch_block_timestamp(height):
     return None
 
 # チャネルを指定してデータを取得
-base_file = "ibc_packet_delay_analysis_"
+base_file = "ibc_packet_delay_analysis_30159500-30190534"
 target_csv = base_file + ".csv"
 df = pd.read_csv(target_csv)
 available_channels = sorted(set(df["channel_id"].str.replace("channel-", "").astype(int)))

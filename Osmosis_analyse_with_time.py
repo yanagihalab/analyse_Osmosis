@@ -2,15 +2,17 @@ import requests
 import time
 import re
 import pandas as pd
-from datetime import datetime
+import numpy as np
+from datetime import datetime, timedelta
+import tqdm  # tqdm をインポート
 
 # RPCエンドポイント
 RPC_URL = "https://rpc.lavenderfive.com/osmosis/block_results?height="
 BLOCK_HEADER_URL = "https://rpc.lavenderfive.com/osmosis/block?height="
 
 # 解析対象のブロック範囲
-START_HEIGHT = 30230000
-END_HEIGHT = 30251560# 30,251,560
+START_HEIGHT = 30050000
+END_HEIGHT = 30052000  # デバッグ用に小さい範囲
 
 print(f"{START_HEIGHT} から {END_HEIGHT} までの {END_HEIGHT - START_HEIGHT} ブロック分の分析")
 
@@ -25,19 +27,30 @@ ack_tx_data = {}
 packet_delays = []
 
 def fetch_block_results(height, retries=3):
+    """ 指定したブロックの情報を取得する（最大3回リトライ）"""
     for attempt in range(retries):
         try:
-            response = requests.get(RPC_URL + str(height))
+            response = requests.get(RPC_URL + str(height), timeout=5)  # 5秒のタイムアウト設定
             if response.status_code == 200:
-                return response.json()
-            time.sleep(0.1)
-        except Exception as e:
-            print(f"Error fetching block {height}, attempt {attempt+1}: {e}")
-    return None
+                data = response.json()
+                if data.get("result") and "txs_results" in data["result"]:
+                    return data  # 成功した場合はデータを返す
+                else:
+                    print(f"Warning: txs_results is missing for height {height}, attempt {attempt+1}/{retries}")
+            else:
+                print(f"Error: Received status code {response.status_code} for block {height}, attempt {attempt+1}/{retries}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching block {height}, attempt {attempt+1}/{retries}: {e}")
+
+        time.sleep(1)  # 1秒待機して再試行
+
+    print(f"Failed to fetch block {height} after {retries} attempts.")
+    return None  # 取得できなかった場合は None を返す
 
 def fetch_block_timestamp(height):
+    """ 指定したブロックのタイムスタンプを取得する """
     try:
-        response = requests.get(BLOCK_HEADER_URL + str(height))
+        response = requests.get(BLOCK_HEADER_URL + str(height), timeout=5)
         if response.status_code == 200:
             block_data = response.json()
             timestamp = block_data["result"]["block"]["header"]["time"]
@@ -49,19 +62,21 @@ def fetch_block_timestamp(height):
                 timestamp = f"{base_time}.{fraction}"
 
             return datetime.fromisoformat(timestamp)
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"Error fetching timestamp for block {height}: {e}")
     return None
 
 def parse_ibc_events(height, block_data):
+    """ IBC関連のイベントを解析 """
     if not block_data or not isinstance(block_data, dict):
-        print(f"Warning: Block data is invalid for height {height}")
+        print(f"Warning: Block data is invalid or missing for height {height}")
         return
     
-    txs_results = block_data.get("txs_results", [])
-    
+    txs_results = block_data.get("txs_results")
+
+    # txs_results が None の場合、リトライ後も取得できなかったと判断
     if not isinstance(txs_results, list):
-        print(f"Warning: txs_results is invalid for height {height}")
+        print(f"Warning: txs_results is missing or invalid for height {height}")
         return
     
     tx_fees = {}
@@ -103,46 +118,36 @@ def parse_ibc_events(height, block_data):
                     ack_packets[(channel_id, sequence)] = height
                     ack_tx_data[(channel_id, sequence)] = {"ack_tx_hash": tx_hash}
 
-for height in range(START_HEIGHT, END_HEIGHT + 1):
-    print(f"Fetching block {height}...")
-    print(f"Query block {height-START_HEIGHT}")
-    block_results = fetch_block_results(height)
-    if block_results:
-        parse_ibc_events(height, block_results.get("result", {}))
-    block_timestamps[height] = fetch_block_timestamp(height)
-    time.sleep(0.5)
+# 残り時間の計測用
+start_time = time.time()
+processed_blocks = 0
 
-for key in send_packets.keys():
-    send_height = send_packets[key]
-    ack_height = ack_packets.get(key)
-    send_time = block_timestamps.get(send_height)
-    ack_time = block_timestamps.get(ack_height) if ack_height else None
-    delay_blocks = (ack_height - send_height) if ack_height else None
-    delay_time = (ack_time - send_time).total_seconds() if send_time and ack_time else None
-    
-    fee_info = fee_data.get(key, {"fee_amount": None, "fee_denom": None})
-    send_tx_info = send_tx_data.get(key, {
-        "send_tx_hash": None
-    })
-    ack_tx_info = ack_tx_data.get(key, {
-        "ack_tx_hash": None
-    })
-    
-    packet_delays.append({
-        "channel_id": key[0],
-        "sequence": key[1],
-        "send_height": send_height,
-        "send_time": send_time.isoformat() if send_time else None,
-        "ack_height": ack_height,
-        "ack_time": ack_time.isoformat() if ack_time else None,
-        "block_delay": delay_blocks,
-        "time_delay_sec": delay_time,
-        "fee_amount": fee_info["fee_amount"],
-        "fee_denom": fee_info["fee_denom"],
-        "send_tx_hash": send_tx_info["send_tx_hash"],
-        "ack_tx_hash": ack_tx_info["ack_tx_hash"]
-    })
+# tqdm で進捗バーを表示
+with tqdm.tqdm(total=(END_HEIGHT - START_HEIGHT + 1), desc="Processing Blocks") as pbar:
+    for height in range(START_HEIGHT, END_HEIGHT + 1):
+        block_start_time = time.time()  # 各ブロックの処理開始時間
 
+        block_results = fetch_block_results(height)
+        if block_results:
+            parse_ibc_events(height, block_results.get("result", {}))
+
+        block_timestamps[height] = fetch_block_timestamp(height)
+
+        # 平均処理時間の計算
+        processed_blocks += 1
+        elapsed_time = time.time() - start_time
+        avg_time_per_block = elapsed_time / processed_blocks
+        remaining_blocks = END_HEIGHT - height
+        eta_seconds = avg_time_per_block * remaining_blocks
+        eta_time = str(timedelta(seconds=int(eta_seconds)))
+
+        # tqdm の進捗バー更新
+        pbar.set_postfix({"ETA": eta_time, "Remaining Blocks": remaining_blocks})
+        pbar.update(1)
+
+        time.sleep(0.1)
+
+# データ整理と保存
 df = pd.DataFrame(packet_delays)
 csv_filename = f"ibc_packet_delay_analysis_{START_HEIGHT}-{END_HEIGHT}.csv"
 df.to_csv(csv_filename, index=False)
