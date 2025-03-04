@@ -11,6 +11,29 @@ BLOCK_HEADER_URL = "https://rpc.lavenderfive.com/osmosis/block?height="
 filter_mode = input("フィルターを適用しますか？ (yes/no): ").strip().lower()
 apply_filter = filter_mode == "yes"
 
+# チャネルを指定してデータを取得
+base_file = "ibc_packet_delay_30410000-30470000"
+target_csv = base_file + ".csv"
+df = pd.read_csv(target_csv)
+
+# 各チャネルのIBCトランザクション数を集計
+top7_channels = df["channel_id"].value_counts().head(7)
+top7_df = top7_channels.reset_index()
+top7_df.columns = ["channel_id", "ibc_count"]
+print("Top 7 IBC Channels:")
+print(top7_df)
+
+available_channels = sorted(set(df["channel_id"].str.replace("channel-", "").astype(int)))
+print("利用可能なチャネルID:", ", ".join(map(str, available_channels)))
+
+if apply_filter:
+    target_channel = input("対象のチャネル番号を入力してください (例: 0, 122, 208): ").strip()
+    if target_channel not in map(str, available_channels):
+        print("無効なチャネルIDが入力されました。利用可能なチャネルを確認してください。")
+        exit()
+else:
+    target_channel = None
+
 # CSVファイルからブロック高さを取得
 def load_block_heights(csv_filename, target_channel=None):
     """CSVファイルから指定したチャネルのブロック高さを取得する"""
@@ -36,21 +59,6 @@ def fetch_block_timestamp(height):
     except Exception as e:
         print(f"Error fetching timestamp for block {height}: {e}")
     return None
-
-# チャネルを指定してデータを取得
-base_file = "ibc_packet_delay_analysis_30159500-30190534"
-target_csv = base_file + ".csv"
-df = pd.read_csv(target_csv)
-available_channels = sorted(set(df["channel_id"].str.replace("channel-", "").astype(int)))
-print("利用可能なチャネルID:", ", ".join(map(str, available_channels)))
-
-if apply_filter:
-    target_channel = input("対象のチャネル番号を入力してください (例: 0, 122, 208): ").strip()
-    if target_channel not in map(str, available_channels):
-        print("無効なチャネルIDが入力されました。利用可能なチャネルを確認してください。")
-        exit()
-else:
-    target_channel = None
 
 block_heights = load_block_heights(target_csv, target_channel)
 
@@ -78,6 +86,7 @@ plt.figure(figsize=(10, 6))
 plt.hist(df["time_delay_sec"].dropna(), bins=100, edgecolor='black', alpha=0.7)
 plt.xlabel("Time Delay (seconds)")
 plt.ylabel("Frequency")
+plt.xlim(0, 50)
 plt.title("Distribution of Time Delay (seconds)")
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 
@@ -98,4 +107,3 @@ plt.grid(axis='y', linestyle='--', alpha=0.7)
 block_plot_filename = f"block_delay_distribution_" + str(base_file) + "_" + f"{target_channel if apply_filter else 'all'}.png"
 plt.savefig(block_plot_filename)
 print(f"Histogram saved as {block_plot_filename}")
-
