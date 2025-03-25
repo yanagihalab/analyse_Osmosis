@@ -10,9 +10,9 @@ RPC_URL = "https://cosmoshub.tendermintrpc.lava.build/block_results?height="
 BLOCK_HEADER_URL = "https://cosmoshub.tendermintrpc.lava.build/block?height="
 
 # 解析対象ブロック範囲
-START_HEIGHT = 22529000
+START_HEIGHT = 23144450
 END_HEIGHT = 24603038
-BLOCK_INTERVAL = 10000  # 一時保存間隔
+BLOCK_INTERVAL = 5000  # 一時保存間隔
 
 # ディレクトリ設定
 TEMP_DIR = "current"

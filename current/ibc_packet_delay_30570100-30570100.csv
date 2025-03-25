@@ -1,0 +1,2 @@
+channel_id,sequence,send_height,send_time,ack_height,ack_time,block_delay,fee_amount,fee_denom
+channel-38946,124883,30570100,2025-03-01T03:12:42.623743,,,,,

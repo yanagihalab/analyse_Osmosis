@@ -6,12 +6,13 @@ import tqdm  # 進捗バー
 import os  # ディレクトリ操作
 
 # RPCエンドポイント
-RPC_URL = "https://osmosis-rpc.publicnode.com/block_results?height="
-BLOCK_HEADER_URL = "https://osmosis-rpc.publicnode.com:443/block?height="
+# https://rpc.lavenderfive.com:443/osmosis
+RPC_URL = "https://rpc.lavenderfive.com:443/osmosis/block_results?height="
+BLOCK_HEADER_URL = "https://rpc.lavenderfive.com:443/osmosis/block?height="
 
 # 解析対象ブロック範囲
-START_HEIGHT = 30489800
-END_HEIGHT = 30550000
+START_HEIGHT = 30631900
+END_HEIGHT = 30632000 + 60200
 BLOCK_INTERVAL = 2000  # 一時保存間隔
 
 # ディレクトリ設定

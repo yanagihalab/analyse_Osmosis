@@ -6,8 +6,8 @@ import pandas as pd
 RPC_URL = "https://rpc.lavenderfive.com/osmosis/block_results?height="
 
 # 解析対象のブロック範囲
-START_HEIGHT = 30131000  # 例: 調査開始ブロック
-END_HEIGHT = 30159694   # 例: 調査終了ブロック
+START_HEIGHT = 30159600  # 例: 調査開始ブロック
+END_HEIGHT = 30159600 + 50000   # 例: 調査終了ブロック
 print(f"{START_HEIGHT} から {END_HEIGHT} までの {END_HEIGHT-START_HEIGHT} ブロック分の分析")
 # IBCパケット情報を保存する辞書
 send_packets = {}

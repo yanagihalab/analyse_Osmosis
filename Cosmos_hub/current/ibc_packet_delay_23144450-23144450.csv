@@ -1,0 +1,2 @@
+channel_id,sequence,send_height,send_time,ack_height,ack_time,block_delay,fee_amount,fee_denom
+channel-141,4054545,23144450,2024-11-19T17:48:19.564349,,,,2405uatom,
